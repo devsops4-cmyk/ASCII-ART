@@ -7,78 +7,40 @@ import (
 )
 
 func main() {
-	if len(os.Args) < 2 || len(os.Args) >3 {
-		fmt.Println("incorrect Input: use: go run . \"Hello\" The Font")
-		return
+	data, err := os.ReadFile("thinkertoy.txt")
+	if err != nil {
+		fmt.Println("Error:", err)
+		os.Exit(1)
 	}
+
+	banner := string(data)
+	banner = strings.ReplaceAll(banner, "\r", "")
+	bannerList := strings.Split(banner, "\n")
 
 	input := os.Args[1]
+	SplitInput := strings.Split(input, "\\n")
 
-	fontName := "standard.txt"
-
-	if len(os.Args) == 3 {
-		fontName = os.Args[2] + ".txt"
-	}
-
-	font, err := loadFonts(fontName)
-	if err != nil {
-		fmt.Println("Failed to load font:", err)
-		return
-	}
-	fmt.Println("Font length:", len(font))
-	render(input, font)
-}
-func render(text string, font []string) {
-
-	if text == "" {
-		return
-	}
-
-	lines := strings.Split(text, "\n")
-
-	for i, line := range lines {
-
-		if line != "" {
-			checkLine(line, font)
+	for i, word := range SplitInput {
+		if word == "" && i == 0 {
+			continue
+		}
+		if word == "" {
+			fmt.Println()
+			continue
 		}
 
-		// print newline between blocks only
-		if i < len(lines)-1 {
+		for i := 0; i < 8; i++ {
+
+			for _, char := range word {
+				if char < 32 || char > 126 {
+					fmt.Println("Character usage out of range")
+				}
+
+				startIndex := (int(char) - 32) * 9
+				fmt.Print(bannerList[startIndex+i])
+			}
 			fmt.Println()
 		}
 	}
-}
-func loadFonts(filename string) ([]string, error) {
-	data, err := os.ReadFile(filename)
-	if err != nil {
-		return nil, err
-	}
 
-	content := strings.ReplaceAll(string(data), "\r", "")
-	lines := strings.Split(content, "\n")
-
-	return lines, nil
-}
-
-func checkLine(text string, font []string) {
-
-	height := 9
-
-	for row := 0; row < height; row++ {
-
-		for _, char := range text {
-
-			ascii := int(char)
-
-			if ascii < 32 || ascii > 126 {
-				continue
-			}
-
-			offset := (ascii - 32) * height
-
-			fmt.Print(font[offset+row])
-		}
-
-		fmt.Println()
-	}
 }
