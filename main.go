@@ -7,40 +7,52 @@ import (
 )
 
 func main() {
-	data, err := os.ReadFile("thinkertoy.txt")
+
+	if len(os.Args) < 2 {
+		fmt.Println("Usage: go run: \"Hello\"")
+		return
+	}
+
+	data, err := os.ReadFile("standard.txt")
+
 	if err != nil {
-		fmt.Println("Error:", err)
+		fmt.Println("Error Eeading File", err)
 		os.Exit(1)
 	}
 
 	banner := string(data)
+	//fmt.Print(banner)
+
 	banner = strings.ReplaceAll(banner, "\r", "")
-	bannerList := strings.Split(banner, "\n")
+
+	bannerTwo := strings.Split(banner, "\n")
 
 	input := os.Args[1]
-	SplitInput := strings.Split(input, "\\n")
 
-	for i, word := range SplitInput {
+	line := strings.Split(input, "\\n")
+
+	for i, word := range line {
 		if word == "" && i == 0 {
 			continue
 		}
+
 		if word == "" {
 			fmt.Println()
 			continue
 		}
 
-		for i := 0; i < 8; i++ {
-
-			for _, char := range word {
-				if char < 32 || char > 126 {
-					fmt.Println("Character usage out of range")
+		for i := 1; i <= 8; i++ {
+			for _, ascii := range word {
+				if ascii < 32 || ascii > 126 {
+					continue
 				}
+				start := (int(ascii) - 32) * 9
+				fmt.Print(bannerTwo[start+i])
 
-				startIndex := (int(char) - 32) * 9
-				fmt.Print(bannerList[startIndex+i])
 			}
 			fmt.Println()
 		}
+
 	}
 
 }

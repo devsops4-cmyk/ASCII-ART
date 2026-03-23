@@ -1,0 +1,1 @@
+if i minus my ascii value from 32 what likely to be the output and can you state the reason behind it 
